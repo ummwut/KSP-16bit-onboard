@@ -68,6 +68,7 @@
                 iav = rr(ia);
                 iav = (ushort)(iav ^ 0xffff);
                 iav = (ushort)(iav + 1);
+                wr(ib, iav);
                 break;
             case 3: //add
                 iav = rr(ia);
