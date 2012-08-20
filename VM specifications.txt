@@ -1,0 +1,141 @@
+Virtual machine specs (version 2)
+
+Sorry for the poor formatting.
+
+=================================================================================
+
+A quick summary of the virtual machine:
+
+• all registers are 16 bits wide
+• memory is an array of 65,536 16bit words (This is because I'm lazy, and this allows for 128k of 
+	memory instead of half that.)
+• the virtual machine clock speed is constrained only by the speed of the host machine
+• 10 general registers (A through J)
+• an Index Base "IB" register (added to the value of a register used as an index)
+• a Program Counter "PC" register
+• a FLags register "FL"
+• a Stack Pointer register "SP"
+• a pseudo-register Stack register "ST" (referring to this is like using PUSH/POP)
+• a pseudo-register Next Word register "NW" (refers to an immediate value; the next word)
+• 32 Special Registers (Only one is seeing consistent use for now: SPECREG 0 is the Interrupt Handler Address.)
+
+Execution is achieved by reading in the word at wherever PC is pointing, then incrementing PC after the word is read. The 
+instruction then does whatever it's supposed to do. Lather. Rinse. Repeat.
+
+There are interrupts and an interrupt queue. Both must be enabled by setting their flags. The interrupt flag need not be set 
+to queue interrupts, but it must be set to allow interrupts to be addressed. If the interrupt queue flag is reset while there
+are messages on the queue, they will be lost. If interrupts are enabled but the queue is not, interrupts will never be 
+addressed, due to no interrupts ever being placed on the queue. If the queue is full, no additional interrupts will be added.
+
+
+The endian-ness of this virtual machine depends on the host machine's endian-ness, as a consequence of being compiled 
+on that machine. However, it shouldn't matter, as everything is handled in 16 bit chunks anyway. Therefore, endian-ness
+is only in consideration of multi-word operations, which will be up to the running code.
+
+
+=================================================================================
+
+About instructions and registers:
+
+Instructions are one word long, unless using the Next Word. All instructions take one clock cycle. In every instruction, the 
+upper 6 bits are the opcode, the remaining 10 bits are register codes. The registercodes are 5 bits each: the uppermost bit 
+is an index flag, the lower 4 bits are the register specifier. Consequently, all registers may be used as index registers, in any 
+operation whatsoever. For example, the code "000000 11101 11111" would copy the value of the memory indexed by 
+SP to the memory address indexed by the Next Word. Writing directly to Next Word fails without throwing an error, only 
+resulting in data loss.
+
+Register summary:
+Name	Value	Desription
+
+A to J	0x0 - 0x9	General registers
+IB	0xA	Index Base. This register's value is always added to the value of every register used as an index.
+PC	0xB	Program Counter. This register holds the memory address of the next instruction. It is always 
+		incremented after an instruction is read, and is incremented when the Next Word is read.
+FL	0xC	The Flag register. This register's bits flag the status of the machine. Unused flags should always be 
+		considered as set at Zero. From highest to lowest order bit, the flag bits stand for: operation resulted 
+		in a Carry, operation resulted in a Zero, Operation Divided by zero, First value was greater than 
+		second value in an unsigned comparison, First value was greater than second value in a signed 
+		comparison, First value was equal to second value, First value was less than second value in a signed 
+		comparison, First value was less than second value in an unsigned comparison, Interrupt queue 
+		enabled, Interrupts enabled, Unused, Unused, Unused, Unused, Unused, Unused.
+SP	0xD	The Stack Pointer register. This register's value points to the location of the top of the stack. *SP 
+		should be used to PEEK the stack.
+ST	0xE	The Stack. This pseudo-register is used as a normal register, to facilitate interactions with the stack. 
+		Writing to ST means to PUSH the value, while reading from ST means to POP. 
+NW	0xF	The Next Word. This pseudo-register is used as an immediate value, and although it can be written 
+		to, nothing will happen when this is done. *NW is used as writing/reading from a fixed location in 
+		memory.
+
+Opcode summary:
+Name	Value	Description
+
+SET	0x00	Set. Copies the value of the first register to the second register.
+EXCH	0x01	Register Exchange. Exhanges the values between the first and second registers.
+TWOC	0x02	Two's Compliment. Two's Compliments the value of the first register, and saves it to the second register.
+ADD	0x03	Add. Adds the values of the first and second register, and saves the result to the second register.
+		Compares thev against each other before the operation. Modifies Carry and Zero.
+ADDC	0x04	Add with Carry. Adds the values of Carry, the first and second register, and saves the result to the second register.
+		Compares the registers against each other before the operation. Modifies Carry and Zero.
+SUB	0x05	Subtract. Subtracts second register from first register, and saves the result to the second register.
+		Compares the registers against each other before the operation. Modifies Carry and Zero.
+SUBC	0x06	Subtract with Carry. Subtracts Carry and the second register from the first register, and saves it to the second register.
+		Compares the registers against each other before the operation. Modifies Carry and Zero.
+MUL	0x07	Multiply. Multiplies the first register and the second register, without regard to sign. The low word of the 
+		operation is saved in the first register, while the high word of the operation is saved in the second
+		register. Carry is set if the high word is not zero, while Zero is set if the low word is zero.
+DIV	0x08	Divide. Divides the first register by the second register. If the second register is zero, the operation is not 
+		completed, and the Divide By Zero flag is set. Otherwise, the integer part of the result is saved
+		in the first register, and the fraction part is saved in the second register. If the integer part is zero, 
+		the Zero flag is set. If the fraction part is not zero, the Carry flag is set.
+XOR	0x09	Bitwise Exclusive Or. Exclusive Ors the registers together, and saves the result in the second register.
+		Compares the registers against each other before the operation. Modifies Zero.
+AND	0x0A	Bitwise And. Ands the registers together, and saves the result in the second register.
+		Compares the registers against each other before the operation. Modifies Zero.
+OR	0x0B	Bitwise Or. Ors the registers together, and saves the result in the second register.
+		Compares the registers against each other before the operation. Modifies Zero.
+INC	0x0C	Increment. Increments the first register, and saves the result to the second register.
+		Modifies Zero flag.
+DEC	0x0D	Decrement. Decrements the first register, and saves the result to the second register.
+		Modifies Zero flag.
+STI	0x0E	Stream Increment. Copies the memory indexed by the first register to the memory indexed by the second register, 
+		then increments both.
+STD	0x0F	Stream Decrement. Copies the memory indexed by the first register to the memory indexed by the second register, 
+		then decrements both.
+ROL	0x10	Rotate Bits Left. Rotates the bits in the first register left, and saves the result to the second register.
+ROR	0x11	Rotate Bits Right. Rotates the bits in the first register right, and saves the result to the second register.
+ROLC	0x12	Rotate Bits Left through Carry. Rotates the bits in the first register left, with the highest bit rotating into carry, while Carry
+		is rotated into the lowest bit. The result is saved in the second register.
+RORC	0x13	Rotate Bits Right through Carry. Rotates the bits in the first register right, with the lowest bit rotating into carry, while 
+		Carry is rotated into the highest bit. The result is saved in the second register.
+SHL	0x14	Shift Bits Left. Shifts the bits in the first register left. The highest bit is shifted into Carry, while a zero is shifted into the 
+		lowest bit. 
+SHR	0x15	Shift Bits Right. Shifts the bits in the first register right. The lowest bit is shifted into Carry, while a zero is shifted into the 
+		highest bit. 
+SHRA	0x16	Shift Bits Right Arithmetically. Shifts the bits in the first register right. The lowest bit is shifted into Carry, while the highest 
+		bit is shifted right and copied to its previous bit position.
+IFSET	0x17	Conditional Set to PC. Bitwise Ands the first register with FL, and copies the second register to PC if the result is not zero.
+		No flags are modified.
+IFADD	0x18	Conditional Add to PC. Bitwise Ands the first register with FL, and adds the second register to PC if the result is not zero.
+		No flags are modified.
+CALL	0x19	Call Subroutine. PC is pushed to the stack, the first register is copied to PC and the second register. The second register 
+		is typically IB when calling to subroutines that assume the start of code is at Address 0000.
+INT	0x1A	Add Code to Interrupt Queue. The first register is added to the Interrupt Queue and is also copied to the second register.
+IRET	0x1B	Return from Interrupt. The Interrupt Enabled flag is set, and the first register is copied to the second register. The registers
+		are typically set as ST and PC, respectivally.
+GSPEC	0x1C	Get Special Register. Copies the value from a special register (designated by the literal value of the first register value in the 
+		instruction) to the second register.
+SSPEC	0x1D	Set Special Register. Copies the first register to a special register (designated by the literal value of the second register value 
+		in the instruction).
+HDWR	0x1E	Hardware Signal. Signals the hardware designated by the first register with a code held by the second register.
+		This aspect of the virtual machine has not been developed at all.
+
+
+=================================================================================
+
+About Hardware:
+
+There is practically nothing I have done to work on this, besides a basic counter that signals an interrupt when it reaches zero. Refer to the
+Counter's class file to see how a hardware object should be layed out. Adding hardware involves changing the source of the machine class,
+and this is terribly sloppy but I have not had time to figure out a good hardware interface as of now. Maybe someone will have a good 
+suggestion.
+

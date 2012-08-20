@@ -143,6 +143,10 @@
                     reg[12] = (ushort)(reg[12] & 0x1fff);
                     reg[12] = (ushort)(reg[12] | ((dwv & 0xffff0000) > 0 ? (ushort)0x0000 : (ushort)0x4000));
                     reg[12] = (ushort)(reg[12] | ((dwv & 0x0000ffff) > 0 ? (ushort)0x8000 : (ushort)0x0000));
+                    ibv = (ushort)(dwv & 0x0000ffff);
+                    iav = (ushort)(dwv >> 16 & 0x0000ffff);
+                    wr(ia, iav);
+                    wr(ib, ibv);
                 }
                 else
                 {
@@ -328,7 +332,7 @@
             case 23: //IFSPC
                 iav = rr(ia);
                 ibv = rr(ib);
-                if ((reg[12] ^ iav) > 0)
+                if ((reg[12] & iav) > 0)
                 {
                     reg[11] = ibv;
                 }
@@ -336,7 +340,7 @@
             case 24: //IFAPC
                 iav = rr(ia);
                 ibv = rr(ib);
-                if ((reg[12] ^ iav) > 0)
+                if ((reg[12] & iav) > 0)
                 {
                     reg[11] = (ushort)(reg[11] + ibv);
                 }
