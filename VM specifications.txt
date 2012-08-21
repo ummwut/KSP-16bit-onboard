@@ -16,14 +16,14 @@ A quick summary of the virtual machine:
 • memory is an array of 65,536 16bit words (This is because I'm lazy, and this allows for 128k of 
 	memory instead of half that.)
 • the virtual machine clock speed is constrained only by the speed of the host machine
-• 10 general registers (A through J)
+• 10 general registers (R0 through R9)
 • an Index Base "IB" register (added to the value of a register used as an index)
 • a Program Counter "PC" register
 • a FLags register "FL"
 • a Stack Pointer register "SP"
 • a pseudo-register Stack register "ST" (referring to this is like using PUSH/POP)
 • a pseudo-register Next Word register "NW" (refers to an immediate value; the next word)
-• 32 Special Registers (Only one is seeing consistent use for now: SPECREG 0 is the Interrupt Handler Address.)
+• 32 Special Registers (Only one is seeing consistent use for now: SPECREG 0 is the Interrupt Handler Address, "IHA")
 
 Execution is achieved by reading in the word at wherever PC is pointing, then incrementing PC after the word is read. The 
 instruction then does whatever it's supposed to do. Lather. Rinse. Repeat.
@@ -53,7 +53,7 @@ resulting in data loss.
 Register summary:
 Name	Value	Desription
 
-A to J	0x0 - 0x9	General registers
+R0 to R9	0x0 - 0x9	General registers
 IB	0xA	Index Base. This register's value is always added to the value of every register used as an index.
 PC	0xB	Program Counter. This register holds the memory address of the next instruction. It is always 
 		incremented after an instruction is read, and is incremented when the Next Word is read.
@@ -71,6 +71,8 @@ ST	0xE	The Stack. This pseudo-register is used as a normal register, to facilita
 NW	0xF	The Next Word. This pseudo-register is used as an immediate value, and although it can be written 
 		to, nothing will happen when this is done. *NW is used as writing/reading from a fixed location in 
 		memory.
+IHA	0x0	The Interrupt Handler Address. This special register holds the address copied to PC when an interrupt is pulled 
+		off the queue. What happens after the address is loaded is up to the instructions at the address.
 
 Opcode summary:
 Name	Value	Description
