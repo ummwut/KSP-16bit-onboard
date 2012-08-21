@@ -1,0 +1,31 @@
+The assembler is the following classes: labeltree.cs, asmblr.cs
+
+Group them up, compile and run. Make modifications how you please, but I'm not responsible for any wierdness that 
+happens when you do. You might want to look at what sort of code it pumps out, or what code it accepts, and then just write your own, or use this as a back-end to a larger interpreter.
+
+I was extremely lazy with writing a basic assembler. So lazy that I almost didn't include labels, but I eventually caved and redesigned it so they could be included. This involved only a preprocessor to look exclusively for labels and save them before moving on to actually interpreting the lines of assembly.
+
+Anyway, the syntax interpreter is extremely unforgiving and all numbers are assumed to be hex WITHOUT a 0x prefix, so syntax is only going to go a few different ways. Each line is matched to exactly one 16bit word, except BASE. Please note that anything inside < and > is to be what the programmer decides, and any colons (:) or ampersands (&) are exactly where they need to be. The asterisk (*) is meant to signify that the register will be used as a pointer to a memory location, and is up to the programmer on whether they need to use the register as an index or not, and is therefore present only to show positioning. Any keywords will be in all caps.
+
+So, here is all the syntax you need to know:
+
+<some label>: <some mnemonic> *<a register> *<a register>
+<some label>: DATA <a 16bit hex code>
+<some label>: DATA &<a label>
+<some mnemonic> *<a register> *<a register>
+DATA <a 16bit hex code>
+DATA &<a label>
+BASE <a 16bit address>
+
+For mnemonics and registers, please refer to the VM specification.
+
+Any words not recognized by the assembler will cause it to fail immediately.
+
+<some label> followed by a colon with no space in between will be interpreted as a label, no matter what non-whitespace characters were before the colon. Duplicate labels will cause the assembler to quit.
+
+&<some label> causes the assembler to go look for the value of <some label> and insert the label's data (the line it was found on) as-is into the assembled file. If you forget the ampersand, it will ragequit.
+
+DATA followed by a hex code is treated as a literal value to load into the assembled file. Typically, this is used to initialize a variable (when used with a label) or to reserve space within code. Otherwise, space could be reserved by simply using BASE and skipping over the space you need.
+
+BASE is for skipping to a desired address within the assembled file. This could be used to place code at a particular offset or skip over space for uninitialized variables. You cannot skip back to an address before the current one. If you try it will quit the program.
+

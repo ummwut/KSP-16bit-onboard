@@ -1,5 +1,11 @@
 Virtual machine specs (version 2)
 
+Classes you need: machine.cs, loader.cs, hdwr.cs, counter.cs
+
+Group them up, compile and run. Make modifications how you please, but I'm not responsible for any wierdness that 
+happens when you do. You might want to add a keyboard and monitor class, inheriting from hdwr.cs before you do 
+anything else, since those are not included.
+
 Sorry for the poor formatting.
 
 =================================================================================
@@ -80,10 +86,10 @@ SUB	0x05	Subtract. Subtracts second register from first register, and saves the 
 		Compares the registers against each other before the operation. Modifies Carry and Zero.
 SUBC	0x06	Subtract with Carry. Subtracts Carry and the second register from the first register, and saves it to the second register.
 		Compares the registers against each other before the operation. Modifies Carry and Zero.
-MUL	0x07	Multiply. Multiplies the first register and the second register, without regard to sign. The low word of the 
+MUL	0x07	Unsigned Multiply. Multiplies the first register and the second register, without regard to sign. The low word of the 
 		operation is saved in the first register, while the high word of the operation is saved in the second
 		register. Carry is set if the high word is not zero, while Zero is set if the low word is zero.
-DIV	0x08	Divide. Divides the first register by the second register. If the second register is zero, the operation is not 
+DIV	0x08	Unsigned Divide. Divides the first register by the second register. If the second register is zero, the operation is not 
 		completed, and the Divide By Zero flag is set. Otherwise, the integer part of the result is saved
 		in the first register, and the fraction part is saved in the second register. If the integer part is zero, 
 		the Zero flag is set. If the fraction part is not zero, the Carry flag is set.
