@@ -1,1 +1,7 @@
-I'll fill this in later.
+Okay. So basically, I had a virtual machine (on paper) laying around for quite a long while.
+
+At some point, I discovered the game Kerbal Space Program and instantly loved it! The free version was neato, so I decided to cough up the money for the new releases beyond 13.3, and discovered that there was a plugin system to add features to the game. This kicked off the idea to add my virtual machine to the game via plugin, since I had desired a flight computer for a flight-control computer, but MechJeb was monstorous and could not be reprogrammed without actually re-writing the C# files and recompiling. 
+
+No one wants to mess around with any of that, especially not me. So I decided to code up my virtual machine and interface it with KSP. Coding and completing the system's processor ws the easy part. Tossing together some code for a really sloppy assembler was necessary for quick testing. Now, I'm stuck on ideas for hardware for it, since I know nothing about KSP's GUI (which I intend to use to emulate a minimizable screen for the VM) and catching keys would prove to be potentially difficult, given the need to differentiate between rocket control keystrokes and keystrokes intended for the VM. 
+
+So here we are. Basically a virtual computer box without a keyboard, screen, or even ports to "plug" any of that stuff in. Suggestions, anyone?
