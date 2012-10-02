@@ -378,50 +378,52 @@ class asmblr
                 return 7;
             case "DIV":
                 return 8;
-            case "XOR":
+            case "NOT":
                 return 9;
-            case "AND":
+            case "XOR":
                 return 10;
-            case "OR":
+            case "AND":
                 return 11;
-            case "INC":
+            case "OR":
                 return 12;
-            case "DEC":
+            case "INC":
                 return 13;
-            case "STI":
+            case "DEC":
                 return 14;
-            case "STD":
+            case "STI":
                 return 15;
-            case "ROL":
+            case "STD":
                 return 16;
-            case "ROR":
+            case "ROL":
                 return 17;
-            case "ROLC":
+            case "ROR":
                 return 18;
-            case "RORC":
+            case "ROLC":
                 return 19;
-            case "SHL":
+            case "RORC":
                 return 20;
-            case "SHR":
+            case "SHL":
                 return 21;
-            case "SHRA":
+            case "SHR":
                 return 22;
-            case "IFSET":
+            case "SHRA":
                 return 23;
-            case "IFADD":
+            case "IFSET":
                 return 24;
-            case "CALL":
+            case "IFADD":
                 return 25;
-            case "INT":
+            case "CALL":
                 return 26;
-            case "IRET":
+            case "INT":
                 return 27;
-            case "GSPEC":
+            case "IRET":
                 return 28;
-            case "SSPEC":
+            case "GSPEC":
                 return 29;
-            case "HDWR":
+            case "SSPEC":
                 return 30;
+            case "HDWR":
+                return 31;
             default:
                 return 255;
         }
@@ -432,6 +434,7 @@ class asmblr
         switch(s)
         {
             case "R0":
+            case "IHA":
                 return 0;
             case "R1":
                 return 1;

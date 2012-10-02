@@ -153,7 +153,12 @@
                     reg[12] = (ushort)(reg[12] | 0x2000);
                 }
                 break;
-            case 9: //xor
+            case 9: //not
+                iav = rr(ia);
+                iav = (ushort)(iav ^ 0xffff);
+                wr(ib, iav);
+                break;
+            case 10: //xor
                 iav = rr(ia);
                 ibv = rr(ib);
                 cmp(iav, ibv);
@@ -162,7 +167,7 @@
                 reg[12] = (ushort)(reg[12] | ((ibv) > 0 ? (ushort)0x0000 : (ushort)0x4000));
                 wr(ib, ibv);
                 break;
-            case 10: //and
+            case 11: //and
                 iav = rr(ia);
                 ibv = rr(ib);
                 cmp(iav, ibv);
@@ -171,7 +176,7 @@
                 reg[12] = (ushort)(reg[12] | ((ibv) > 0 ? (ushort)0x0000 : (ushort)0x4000));
                 wr(ib, ibv);
                 break;
-            case 11: //or
+            case 12: //or
                 iav = rr(ia);
                 ibv = rr(ib);
                 cmp(iav, ibv);
@@ -180,7 +185,7 @@
                 reg[12] = (ushort)(reg[12] | ((ibv) > 0 ? (ushort)0x0000 : (ushort)0x4000));
                 wr(ib, ibv);
                 break;
-            case 12: //inc
+            case 13: //inc
                 dwv = rr(ia);
                 dwv = dwv + 1;
                 reg[12] = (ushort)(reg[12] & 0x3fff);
@@ -189,7 +194,7 @@
                 ibv = (ushort)(dwv & 0xffff);
                 wr(ib, ibv);
                 break;
-            case 13: //dec
+            case 14: //dec
                 dwv = rr(ia);
                 dwv = dwv + 1;
                 reg[12] = (ushort)(reg[12] & 0x3fff);
@@ -198,7 +203,7 @@
                 ibv = (ushort)(dwv & 0xffff);
                 wr(ib, ibv);
                 break;
-            case 14: //sti
+            case 15: //sti
                 iav = rr(ia);
                 ibv = rr(ib);
                 mem[ibv] = mem[iav];
@@ -207,7 +212,7 @@
                 wr(ia, iav);
                 wr(ib, ibv);
                 break;
-            case 15: //std
+            case 16: //std
                 iav = rr(ia);
                 ibv = rr(ib);
                 mem[ibv] = mem[iav];
@@ -216,7 +221,7 @@
                 wr(ia, iav);
                 wr(ib, ibv);
                 break;
-            case 16: //rol
+            case 17: //rol
                 dwv = rr(ia);
                 dwv = dwv << 1;
                 if ((dwv & 0xffff0000) > 0)
@@ -232,7 +237,7 @@
                 ibv = (ushort)(dwv & 0xffff);
                 wr(ib, ibv);
                 break;
-            case 17: //ror
+            case 18: //ror
                 dwv = rr(ia);
                 if ((dwv & 0x00000001) > 0)
                 {
@@ -247,7 +252,7 @@
                 ibv = (ushort)((dwv>>1) & 0xffff);
                 wr(ib, ibv);
                 break;
-            case 18: //rolc
+            case 19: //rolc
                 dwv = rr(ia);
                 dwv = dwv << 1;
                 if ((reg[12] & 0x8000) > 0)
@@ -266,7 +271,7 @@
                 reg[12] = (ibv > 0) ? (ushort)(reg[12] | 0x4000) : (ushort)(reg[12] & 0xbfff);
                 wr(ib, ibv);
                 break;
-            case 19: //rorc
+            case 20: //rorc
                 dwv = rr(ia);
                 dwv = dwv << 1;
                 if ((reg[12] & 0x8000) > 0)
@@ -285,7 +290,7 @@
                 reg[12] = (ibv > 0) ? (ushort)(reg[12] | 0x4000) : (ushort)(reg[12] & 0xbfff);
                 wr(ib, ibv);
                 break;
-            case 20: //shl
+            case 21: //shl
                 dwv = rr(ia);
                 dwv = dwv << 1;
                 if ((dwv & 0x00010000) > 0)
@@ -300,7 +305,7 @@
                 reg[12] = (ibv > 0) ? (ushort)(reg[12] | 0x4000) : (ushort)(reg[12] & 0xbfff);
                 wr(ib, ibv);
                 break;
-            case 21: //shr
+            case 22: //shr
                 dwv = rr(ia);
                 dwv = dwv << 1;
                 if ((dwv & 0x00000001) > 0)
@@ -315,7 +320,7 @@
                 reg[12] = (ibv > 0) ? (ushort)(reg[12] | 0x4000) : (ushort)(reg[12] & 0xbfff);
                 wr(ib, ibv);
                 break;
-            case 22: //shra
+            case 23: //shra
                 dwv = rr(ia);
                 if ((dwv & 0x00000001) > 0)
                 {
@@ -329,7 +334,7 @@
                 reg[12] = (ibv > 0) ? (ushort)(reg[12] | 0x4000) : (ushort)(reg[12] & 0xbfff);
                 wr(ib, ibv);
                 break;
-            case 23: //IFSPC
+            case 24: //IFSPC
                 iav = rr(ia);
                 ibv = rr(ib);
                 if ((reg[12] & iav) > 0)
@@ -337,7 +342,7 @@
                     reg[11] = ibv;
                 }
                 break;
-            case 24: //IFAPC
+            case 25: //IFAPC
                 iav = rr(ia);
                 ibv = rr(ib);
                 if ((reg[12] & iav) > 0)
@@ -345,28 +350,28 @@
                     reg[11] = (ushort)(reg[11] + ibv);
                 }
                 break;
-            case 25: //call
+            case 26: //call
                 iav = rr(ia);
                 wr((byte)14, reg[11]);
                 reg[11] = iav;
                 wr(ib, iav);
                 break;
-            case 26: //int
+            case 27: //int
                 iav = rr(ia);
                 QI(iav);
                 wr(ib, iav);
                 break;
-            case 27: //iret
+            case 28: //iret
                 reg[12] = (ushort)(reg[12] | 0x0040);
                 wr(ib, rr(ia));
                 break;
-            case 28: //gspec
+            case 29: //gspec
                 wr(ib, spec[ia]);
                 break;
-            case 29: //sspec
+            case 30: //sspec
                 spec[ib] = rr(ia);
                 break;
-            case 30: //hdwr
+            case 31: //hdwr
                 iav = rr(ia);
                 ibv = rr(ib);
                 HDWR(iav, ibv);
