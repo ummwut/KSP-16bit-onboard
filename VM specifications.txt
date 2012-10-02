@@ -95,46 +95,47 @@ DIV	0x08	Unsigned Divide. Divides the first register by the second register. If 
 		completed, and the Divide By Zero flag is set. Otherwise, the integer part of the result is saved
 		in the first register, and the fraction part is saved in the second register. If the integer part is zero, 
 		the Zero flag is set. If the fraction part is not zero, the Carry flag is set.
-XOR	0x09	Bitwise Exclusive Or. Exclusive Ors the registers together, and saves the result in the second register.
+NOT	0x09	Bitwise Not. Nots the first register and stores the result in the second register.
+XOR	0x0A	Bitwise Exclusive Or. Exclusive Ors the registers together, and saves the result in the second register.
 		Compares the registers against each other before the operation. Modifies Zero.
-AND	0x0A	Bitwise And. Ands the registers together, and saves the result in the second register.
+AND	0x0B	Bitwise And. Ands the registers together, and saves the result in the second register.
 		Compares the registers against each other before the operation. Modifies Zero.
-OR	0x0B	Bitwise Or. Ors the registers together, and saves the result in the second register.
+OR	0x0C	Bitwise Or. Ors the registers together, and saves the result in the second register.
 		Compares the registers against each other before the operation. Modifies Zero.
-INC	0x0C	Increment. Increments the first register, and saves the result to the second register.
+INC	0x0D	Increment. Increments the first register, and saves the result to the second register.
 		Modifies Zero flag.
-DEC	0x0D	Decrement. Decrements the first register, and saves the result to the second register.
+DEC	0x0E	Decrement. Decrements the first register, and saves the result to the second register.
 		Modifies Zero flag.
-STI	0x0E	Stream Increment. Copies the memory indexed by the first register to the memory indexed by the second register, 
+STI	0x0F	Stream Increment. Copies the memory indexed by the first register to the memory indexed by the second register, 
 		then increments both.
-STD	0x0F	Stream Decrement. Copies the memory indexed by the first register to the memory indexed by the second register, 
+STD	0x10	Stream Decrement. Copies the memory indexed by the first register to the memory indexed by the second register, 
 		then decrements both.
-ROL	0x10	Rotate Bits Left. Rotates the bits in the first register left, and saves the result to the second register.
-ROR	0x11	Rotate Bits Right. Rotates the bits in the first register right, and saves the result to the second register.
-ROLC	0x12	Rotate Bits Left through Carry. Rotates the bits in the first register left, with the highest bit rotating into carry, while Carry
+ROL	0x11	Rotate Bits Left. Rotates the bits in the first register left, and saves the result to the second register.
+ROR	0x12	Rotate Bits Right. Rotates the bits in the first register right, and saves the result to the second register.
+ROLC	0x13	Rotate Bits Left through Carry. Rotates the bits in the first register left, with the highest bit rotating into carry, while Carry
 		is rotated into the lowest bit. The result is saved in the second register.
-RORC	0x13	Rotate Bits Right through Carry. Rotates the bits in the first register right, with the lowest bit rotating into carry, while 
+RORC	0x14	Rotate Bits Right through Carry. Rotates the bits in the first register right, with the lowest bit rotating into carry, while 
 		Carry is rotated into the highest bit. The result is saved in the second register.
-SHL	0x14	Shift Bits Left. Shifts the bits in the first register left. The highest bit is shifted into Carry, while a zero is shifted into the 
+SHL	0x15	Shift Bits Left. Shifts the bits in the first register left. The highest bit is shifted into Carry, while a zero is shifted into the 
 		lowest bit. 
-SHR	0x15	Shift Bits Right. Shifts the bits in the first register right. The lowest bit is shifted into Carry, while a zero is shifted into the 
+SHR	0x16	Shift Bits Right. Shifts the bits in the first register right. The lowest bit is shifted into Carry, while a zero is shifted into the 
 		highest bit. 
-SHRA	0x16	Shift Bits Right Arithmetically. Shifts the bits in the first register right. The lowest bit is shifted into Carry, while the highest 
+SHRA	0x17	Shift Bits Right Arithmetically. Shifts the bits in the first register right. The lowest bit is shifted into Carry, while the highest 
 		bit is shifted right and copied to its previous bit position.
-IFSET	0x17	Conditional Set to PC. Bitwise Ands the first register with FL, and copies the second register to PC if the result is not zero.
+IFSET	0x18	Conditional Set to PC. Bitwise Ands the first register with FL, and copies the second register to PC if the result is not zero.
 		No flags are modified.
-IFADD	0x18	Conditional Add to PC. Bitwise Ands the first register with FL, and adds the second register to PC if the result is not zero.
+IFADD	0x19	Conditional Add to PC. Bitwise Ands the first register with FL, and adds the second register to PC if the result is not zero.
 		No flags are modified.
-CALL	0x19	Call Subroutine. PC is pushed to the stack, the first register is copied to PC and the second register. The second register 
+CALL	0x1A	Call Subroutine. PC is pushed to the stack, the first register is copied to PC and the second register. The second register 
 		is typically IB when calling to subroutines that assume the start of code is at Address 0000.
-INT	0x1A	Add Code to Interrupt Queue. The first register is added to the Interrupt Queue and is also copied to the second register.
-IRET	0x1B	Return from Interrupt. The Interrupt Enabled flag is set, and the first register is copied to the second register. The registers
+INT	0x1B	Add Code to Interrupt Queue. The first register is added to the Interrupt Queue and is also copied to the second register.
+IRET	0x1C	Return from Interrupt. The Interrupt Enabled flag is set, and the first register is copied to the second register. The registers
 		are typically set as ST and PC, respectivally.
-GSPEC	0x1C	Get Special Register. Copies the value from a special register (designated by the literal value of the first register value in the 
+GSPEC	0x1D	Get Special Register. Copies the value from a special register (designated by the literal value of the first register value in the 
 		instruction) to the second register.
-SSPEC	0x1D	Set Special Register. Copies the first register to a special register (designated by the literal value of the second register value 
+SSPEC	0x1E	Set Special Register. Copies the first register to a special register (designated by the literal value of the second register value 
 		in the instruction).
-HDWR	0x1E	Hardware Signal. Signals the hardware designated by the first register with a code held by the second register.
+HDWR	0x1F	Hardware Signal. Signals the hardware designated by the first register with a code held by the second register.
 		This aspect of the virtual machine has not been developed at all.
 
 
